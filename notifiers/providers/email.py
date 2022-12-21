@@ -15,8 +15,8 @@ from ..core import Response
 from ..utils.schema.helpers import list_to_commas
 from ..utils.schema.helpers import one_or_more
 
-DEFAULT_SUBJECT = "New email from 'notifiers'!"
-DEFAULT_FROM = f"notifiers@{socket.getfqdn()}"
+DEFAULT_SUBJECT = "[Server notification]"
+DEFAULT_FROM = "MC2_OSA_notifications@medtronic.com"
 DEFAULT_SMTP_HOST = "localhost"
 
 
@@ -78,6 +78,11 @@ class SMTP(Provider):
                 "format": "hostname",
                 "title": "the host of the SMTP server",
             },
+            "local_hostname": {
+                "type": "string",
+                "format": "hostname",
+                "title": "the local host name of the SMTP server, default: 'localhost'",
+            },
             "port": {
                 "type": "integer",
                 "format": "port",
@@ -123,6 +128,7 @@ class SMTP(Provider):
             "subject": DEFAULT_SUBJECT,
             "from": DEFAULT_FROM,
             "host": DEFAULT_SMTP_HOST,
+            "local_hostname": "localhost",
             "port": 25,
             "tls": False,
             "ssl": False,
@@ -164,7 +170,7 @@ class SMTP(Provider):
 
     def _connect_to_server(self, data: dict):
         self.smtp_server = smtplib.SMTP_SSL if data["ssl"] else smtplib.SMTP
-        self.smtp_server = self.smtp_server(data["host"], data["port"])
+        self.smtp_server = self.smtp_server(data["host"], data["port"], local_hostname='localhost')
         self.configuration = self._get_configuration(data)
         if data["tls"] and not data["ssl"]:
             self.smtp_server.ehlo()
