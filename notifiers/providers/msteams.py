@@ -33,9 +33,10 @@ class MSTeams(Provider):
         "additionalProperties": True,
     }
 
-    _required = {"required": ["message", "webhook_url"]}
+    _required = {"required": ["message"]}  #, "webhook_url"]}
 
     def _prepare_data(self, data: dict) -> dict:
+        data = super()._prepare_data(data)
         # process text/message
         text = data.pop("message")
         data["text"] = text
@@ -61,6 +62,5 @@ class MSTeams(Provider):
 
     def _send_notification(self, data: dict) -> Response:
         url = data.pop("webhook_url")
-        print(data)
         response, errors = requests.post(url, json=data)
         return self.create_response(data, response, errors)

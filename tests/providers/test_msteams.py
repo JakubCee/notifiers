@@ -127,14 +127,13 @@ class TestMSTeams:
         ],
     )
     def test_msteams_missing_required(self, data, missing, provider):
-        data["end_prefix"] = "test"
         with pytest.raises(BadArguments) as e:
-            provider.notify(**data, raise_on_errors=True)
+            provider.notify(**data)
         assert f"'{missing}' is a required property" in e.value.message
 
     @pytest.mark.online
     def test_msteams_card(self, provider):
-        provider.notify(**connector_message_example, webhook_url=hook)
+        provider.notify(**connector_message_example)
 
     @pytest.mark.online
     def test_msteams_simple(self, provider, data):
@@ -147,6 +146,6 @@ class TestMSTeams:
         provider.notify(**data, raise_on_errors=True)
 
     def test_msteams_color(self, provider, data):
-        d = {"color": "bbb555", "title": "TestColor"}
+        d = {"color": "bbb555", "title": "TestColorGold"}
         data.update(d)
         provider.notify(**data, raise_on_errors=True)
